@@ -50,6 +50,7 @@
 #ifdef DEULIGNE_LCD
   #include "Wire.h"
   #include <Deuligne.h>
+  #include "lcd.h"
 #endif
 
 char version_string[] = "U0.9.3.3-BK";
@@ -289,10 +290,6 @@ inline void write_command(char *buf){
 }
 #endif //SDSUPPORT
 
-#ifdef DEULIGNE_LCD
-  Deuligne lcd;
-#endif
-
 ///adds an command to the main command buffer
 void enquecommand(const char *cmd)
 {
@@ -314,13 +311,13 @@ void setup()
   Serial.println("start");
 
 #ifdef DEULIGNE_LCD
-  lcd.init();
-  lcd.print("Hello World");
+  lcd_init();
 #endif
 
 #if defined FANCY_LCD || defined SIMPLE_LCD
   lcd_init();
 #endif
+
   for(int i = 0; i < BUFSIZE; i++){
     fromsd[i] = false;
   }
