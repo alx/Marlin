@@ -42,22 +42,45 @@ void lcd_status()
   key = lcd.get_key();
   if (key != oldkey)   // if keypress is detected
   {
-    delay(50); // wait for debounce time
-    key = lcd.get_key(); // read the value from the sensor & convert into key press
-    if (key != oldkey)
-    {			
-      oldkey = key;
+    oldkey = key;
 
-      // Main Menu
-      //  - select file
-      if(current_menu == 1 && key == 4){ current_menu = 2; }
-
-      // Select File
-      //  - validate selection
-      if(current_menu == 2 && key == 4){ current_menu = 3; }
-      //  - return to main menu
-      if(current_menu == 2 && key == 3){ current_menu = 1; }
+    switch(current_menu){
+    case 1: // Main Menu
+      switch(key){
+        case 0:
+        break;
+        case 1:
+        break;
+        case 2:
+        break;
+        case 3:
+        break;
+        case 4:
+        // goto select file
+        current_menu = 2;
+        break;
+      }
+      break;
+    case 2: // Select file
+      switch(key){
+        case 0:
+        break;
+        case 1:
+        break;
+        case 2:
+        break;
+        case 3:
+        // return to main menu
+        current_menu = 1;
+        break;
+        case 4:
+        // load printing
+        current_menu = 3;
+        break;
+      }
+      break;
     }
+
   }
 
   previous_millis_lcd=millis();
