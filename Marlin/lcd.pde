@@ -47,15 +47,7 @@ void lcd_status()
     switch(current_menu){
     case 1: // Main Menu
       switch(key){
-        case 0:
-        break;
-        case 1:
-        break;
-        case 2:
-        break;
-        case 3:
-        break;
-        case 4:
+        case JOY_OK:
         // goto select file
         current_menu = 2;
         break;
@@ -63,17 +55,11 @@ void lcd_status()
       break;
     case 2: // Select file
       switch(key){
-        case 0:
-        break;
-        case 1:
-        break;
-        case 2:
-        break;
-        case 3:
+        case JOY_LEFT:
         // return to main menu
         current_menu = 1;
         break;
-        case 4:
+        case JOY_OK:
         // load printing
         current_menu = 3;
         break;
