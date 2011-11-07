@@ -52,6 +52,7 @@ const bool ENDSTOPS_INVERTING = true; // set to true to invert the logic of the 
 #define LCD_HEIGHT 4
 #endif
 
+#define DEULIGNE_LCD
 
 #define SDSUPPORT // Enable SD Card Support in Hardware Console
 
