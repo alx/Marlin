@@ -1594,7 +1594,5 @@ char *fillto(int8_t n,char *c)
   
 }
 
-#else
-inline void lcd_status() {};
 #endif
 

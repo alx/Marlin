@@ -1,20 +1,105 @@
 #ifdef DEULIGNE_LCD
 
 char messagetext[LCD_WIDTH]="";
+unsigned long previous_millis_lcd=0;
+
+int previous_menu = -1;
+int current_menu = 0;
+// 0. Initializing
+// 1. Main Menu
+// 2. Select File
+// 3. Printing
+
+int key = -1;
+int oldkey = -1;
+// 0. right
+// 1. up
+// 2. down
+// 3. left
+// 4. ok
 
 void lcd_init()
 {
   lcd.init();
-  lcd.print("Marlin");
-  lcd.setCursor(7, 0);
-  lcd.print(version_string);
-  lcd.setCursor(0, 1);
-  lcd.print("initializing...");
+  lcd_status();
+}
+
+void clear()
+{
+  lcd.clear();
 }
 
 void lcd_status(const char* message)
 {
   strncpy(messagetext,message,LCD_WIDTH);
 }
+
+void lcd_status()
+{
+  if(((millis() - previous_millis_lcd) < LCD_UPDATE_INTERVAL)   )
+    return;
+
+  key = lcd.get_key();
+  if (key != oldkey)   // if keypress is detected
+  {
+    delay(50); // wait for debounce time
+    key = lcd.get_key(); // read the value from the sensor & convert into key press
+    if (key != oldkey)
+    {			
+      oldkey = key;
+
+      // Main Menu
+      //  - select file
+      if(current_menu == 1 && key == 4){ current_menu = 2; }
+
+      // Select File
+      //  - validate selection
+      if(current_menu == 2 && key == 4){ current_menu = 3; }
+      //  - return to main menu
+      if(current_menu == 2 && key == 3){ current_menu = 1; }
+    }
+  }
+
+  previous_millis_lcd=millis();
+  if(previous_menu != current_menu){
+    previous_menu = current_menu;
+
+    switch (current_menu) {
+    case 0:    // Initializing
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Marlin");
+      lcd.setCursor(7, 0);
+      lcd.print(version_string);
+      lcd.setCursor(0, 1);
+      lcd.print("initializing...");
+      current_menu = 1;
+      break;
+    case 1:    // Main Menu
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Main Menu");
+      lcd.setCursor(0, 1);
+      lcd.print("> Select file");
+      break;
+    case 2:    // Select file
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Select file");
+      lcd.setCursor(0, 1);
+      lcd.print("> file1");
+      break;
+    case 3:    // Printing
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Printing...");
+      break;
+    } 
+
+  }
+}
+
+  #define LCD_MESSAGE(x) lcd_status(x);
+  #define LCD_STATUS lcd_status()
 
 #endif
