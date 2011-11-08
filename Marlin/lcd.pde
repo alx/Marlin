@@ -1,5 +1,43 @@
 #ifdef DEULIGNE_LCD
 
+# SCREENS
+
+## SCREEN_INIT
+#
+# ·----------------·
+# |MARLIN v0.9.3.3-
+# |    Welcome
+# ·----------------·
+
+## SCREEN_HOME
+#
+# ·----------------·
+# |<Prepare  Files>
+# |    vOptions
+# ·----------------·
+
+## SCREEN_FILE
+#
+# ·----------------·
+# |Files    XXX/YYY
+# |>File01      OK>
+# ·----------------·
+
+## SCREEN_PRINT
+#
+# ·----------------·
+# |Gco: XXXXX/YYYYY
+# |Printing
+# ·----------------·
+
+## SCREEN_CALIBRATE
+#
+# ·----------------·
+# |Calib  -  Step 1
+# |PREPARE      OK>
+# ·----------------·
+
+
 char messagetext[LCD_WIDTH]="";
 unsigned long previous_millis_lcd=0;
 
