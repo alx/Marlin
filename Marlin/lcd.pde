@@ -13,6 +13,14 @@ int index_files = 0;
 
 boolean lcd_refresh = false;
 
+char calibration_labels[5][12] = {
+  "Prepare   ",
+  "Auto Home ",
+  "Set Origin",
+  "Preheat   ",
+  "Extrude   " };
+int calibration_step = CALIBRATION_PREPARE;
+
 void lcd_init()
 {
   lcd.init();
@@ -44,6 +52,8 @@ void lcd_status()
     case SCREEN_HOME: // Main Menu
       switch(key){
         case JOY_LEFT:
+          current_screen = SCREEN_CALIBRATE;
+          break;
         case JOY_RIGHT:
         case JOY_OK:
         // goto select file
@@ -86,6 +96,38 @@ void lcd_status()
         break;
       }
       break;
+    case SCREEN_CALIBRATE: // Calibrate screen
+      switch(key){
+        case JOY_LEFT:
+        // return to main menu
+        current_screen = SCREEN_HOME;
+        break;
+        case JOY_OK:
+        calibration_step += 1;
+        switch (calibration_step){
+          case CALIBRATION_HOME:
+            enquecommand("G28 X-105 Y-105 Z0");
+            break;
+          case CALIBRATION_ORIGIN:
+            enquecommand("G92 X0 Y0 Z0");
+            break;
+          case CALIBRATION_PREHEAT:
+            target_raw = temp2analog(170);
+            break;
+          case CALIBRATION_EXTRUDE:
+            enquecommand("G92 E0");
+            enquecommand("G1 F700 E50");
+            break;
+          case CALIBRATION_DISABLE_STEPPERS:
+            enquecommand("M84");
+            calibration_step = CALIBRATION_PREPARE;
+            current_screen=SCREEN_HOME;
+            break;
+        }
+        lcd_refresh = true;
+        break;
+      }
+      break;
     }
 
   }
@@ -125,6 +167,13 @@ void lcd_status()
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Printing...");
+      break;
+    case SCREEN_CALIBRATE: // Calibration
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Calibration");
+      lcd.setCursor(0, 1);
+      lcd.print(calibration_labels[calibration_step]);
       break;
     } 
 

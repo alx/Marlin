@@ -9,10 +9,18 @@
   #define JOY_LEFT  3
   #define JOY_OK    4
 
-  #define SCREEN_INIT  0
-  #define SCREEN_HOME  1
-  #define SCREEN_FILE  2
-  #define SCREEN_PRINT 3
+  #define SCREEN_INIT      0
+  #define SCREEN_HOME      1
+  #define SCREEN_FILE      2
+  #define SCREEN_PRINT     3
+  #define SCREEN_CALIBRATE 4
+
+  #define CALIBRATION_PREPARE           0
+  #define CALIBRATION_HOME              1
+  #define CALIBRATION_ORIGIN            2
+  #define CALIBRATION_PREHEAT           3
+  #define CALIBRATION_EXTRUDE           4
+  #define CALIBRATION_DISABLE_STEPPERS  5
 
   Deuligne lcd;
   char filename[11];
