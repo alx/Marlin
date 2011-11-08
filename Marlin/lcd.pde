@@ -38,6 +38,7 @@ void lcd_status()
     switch(current_screen){
     case SCREEN_HOME: // Main Menu
       switch(key){
+        case JOY_RIGHT:
         case JOY_OK:
         // goto select file
         current_screen = SCREEN_FILE;
@@ -50,6 +51,7 @@ void lcd_status()
         // return to main menu
         current_screen = SCREEN_HOME;
         break;
+        case JOY_RIGHT:
         case JOY_OK:
         // load printing
         current_screen = SCREEN_PRINT;
