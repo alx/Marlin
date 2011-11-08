@@ -83,6 +83,12 @@ void lcd_status()
           break;
         case JOY_RIGHT:
         case JOY_OK:
+          char cmd[30];
+          sprintf(cmd,"M23 %s",filename);
+          for(int i=0;i<strlen(filename);i++)
+            filename[i]=tolower(filename[i]);
+          enquecommand(cmd);
+          enquecommand("M24");
           // load printing
           current_screen = SCREEN_PRINT;
           break;
