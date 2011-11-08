@@ -5,36 +5,36 @@
 ## SCREEN_INIT
 #
 # ·----------------·
-# |MARLIN v0.9.3.3-
-# |    Welcome
+# |MARLIN v0.9.3.3-|
+# |    Welcome     |
 # ·----------------·
 
 ## SCREEN_HOME
 #
 # ·----------------·
-# |<Prepare  Files>
-# |    vOptions
+# |<Prepare  Files>|
+# |     vAbout     |
 # ·----------------·
 
 ## SCREEN_FILE
 #
 # ·----------------·
-# |Files    XXX/YYY
-# |>File01      OK>
+# |Files    XXX/YYY|
+# |>File01      OK>|
 # ·----------------·
 
 ## SCREEN_PRINT
 #
 # ·----------------·
-# |Gco: XXXXX/YYYYY
-# |Printing
+# |  Printing...   |
+# |Gco: XXXXX/YYYYY|
 # ·----------------·
 
 ## SCREEN_CALIBRATE
 #
 # ·----------------·
-# |Calib  -  Step 1
-# |PREPARE      OK>
+# |Calib  -  Step 1|
+# |LABEL_PREP   OK>|
 # ·----------------·
 
 
@@ -101,19 +101,18 @@ void screen_display(){
     case SCREEN_INIT:    // Initializing
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("Marlin");
-      lcd.setCursor(7, 0);
-      lcd.print(version_string);
+      lcd.print("MARLIN v0.9.3.3-");
       lcd.setCursor(0, 1);
-      lcd.print("initializing...");
+      lcd.print("    Welcome     ");
+      delay(1000);
       current_screen = SCREEN_HOME;
     break;
     case SCREEN_HOME:    // Main Menu
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("Marlin");
+      lcd.print("<Prepare  Files>");
       lcd.setCursor(0, 1);
-      lcd.print("> Select file");
+      lcd.print("     vAbout     ");
     break;
     case SCREEN_FILE:    // Select file
       lcd.clear();
@@ -145,11 +144,12 @@ void key_interaction(const uint8_t key){
       switch(key){
         case JOY_LEFT:
           current_screen = SCREEN_CALIBRATE;
-          break;
+        break;
         case JOY_RIGHT:
-        case JOY_OK:
-        // goto select file
-        current_screen = SCREEN_FILE;
+          current_screen = SCREEN_FILE;
+        break;
+        case JOY_DOWN:
+          current_screen = SCREEN_INIT;
         break;
       }
     break;
