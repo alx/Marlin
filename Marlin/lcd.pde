@@ -61,8 +61,8 @@ void lcd_status()
   }
 
   previous_millis_lcd=millis();
-  if(previous_menu != current_menu){
-    previous_menu = current_menu;
+  if(previous_screen != current_screen){
+    previous_screen = current_screen;
 
     switch (current_screen) {
     case SCREEN_INIT:    // Initializing
