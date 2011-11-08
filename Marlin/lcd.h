@@ -15,6 +15,7 @@
   #define SCREEN_PRINT 3
 
   Deuligne lcd;
+  char filename[11];
 
   void lcd_init();
   void lcd_status();
