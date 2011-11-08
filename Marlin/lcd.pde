@@ -9,8 +9,6 @@ int current_screen = SCREEN_HOME;
 int key = -1;
 int oldkey = -1;
 
-int index_files = 0;
-
 boolean lcd_refresh = false;
 
 char calibration_labels[5][12] = {
@@ -20,6 +18,9 @@ char calibration_labels[5][12] = {
   "Preheat   ",
   "Extrude   " };
 int calibration_step = CALIBRATION_PREPARE;
+
+int index_files = 0;
+int nb_files = getnrfilenames();
 
 void lcd_init()
 {
@@ -39,7 +40,6 @@ void lcd_status(const char* message)
 
 void lcd_status()
 {
-  int nb_files = getnrfilenames();
   if(((millis() - previous_millis_lcd) < LCD_UPDATE_INTERVAL)   )
     return;
 
@@ -47,8 +47,62 @@ void lcd_status()
   if (key != oldkey)   // if keypress is detected
   {
     oldkey = key;
+    key_interaction(key);
+  }
 
-    switch(current_screen){
+  previous_millis_lcd=millis();
+  if(lcd_refresh || previous_screen != current_screen){
+    previous_screen = current_screen;
+    lcd_refresh = false;
+    screen_display();
+  }
+}
+
+void screen_display(){
+  switch (current_screen) {
+    case SCREEN_INIT:    // Initializing
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Marlin");
+      lcd.setCursor(7, 0);
+      lcd.print(version_string);
+      lcd.setCursor(0, 1);
+      lcd.print("initializing...");
+      current_screen = SCREEN_HOME;
+    break;
+    case SCREEN_HOME:    // Main Menu
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Marlin");
+      lcd.setCursor(0, 1);
+      lcd.print("> Select file");
+    break;
+    case SCREEN_FILE:    // Select file
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Select file - " + nb_files);
+      lcd.setCursor(0, 1);
+      getfilename(index_files);
+      lcd.print("> " + String(filename));
+    break;
+    case SCREEN_PRINT:    // Printing
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Printing...");
+    break;
+    case SCREEN_CALIBRATE: // Calibration
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Calibration");
+      lcd.setCursor(0, 1);
+      lcd.print(calibration_labels[calibration_step]);
+    break;
+  }
+}
+
+void key_interaction(const uint8_t key){
+
+  switch(current_screen){
     case SCREEN_HOME: // Main Menu
       switch(key){
         case JOY_LEFT:
@@ -60,7 +114,7 @@ void lcd_status()
         current_screen = SCREEN_FILE;
         break;
       }
-      break;
+    break;
     case SCREEN_FILE: // Select file
       switch(key){
         case JOY_UP:
@@ -93,7 +147,7 @@ void lcd_status()
           current_screen = SCREEN_PRINT;
           break;
       }
-      break;
+    break;
     case SCREEN_PRINT: // Print screen
       switch(key){
         case JOY_LEFT:
@@ -101,7 +155,7 @@ void lcd_status()
         current_screen = SCREEN_FILE;
         break;
       }
-      break;
+    break;
     case SCREEN_CALIBRATE: // Calibrate screen
       switch(key){
         case JOY_LEFT:
@@ -133,57 +187,9 @@ void lcd_status()
         lcd_refresh = true;
         break;
       }
-      break;
-    }
-
+    break;
   }
 
-  previous_millis_lcd=millis();
-  if(lcd_refresh || previous_screen != current_screen){
-    previous_screen = current_screen;
-    lcd_refresh = false;
-
-    switch (current_screen) {
-    case SCREEN_INIT:    // Initializing
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Marlin");
-      lcd.setCursor(7, 0);
-      lcd.print(version_string);
-      lcd.setCursor(0, 1);
-      lcd.print("initializing...");
-      current_screen = SCREEN_HOME;
-      break;
-    case SCREEN_HOME:    // Main Menu
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Marlin");
-      lcd.setCursor(0, 1);
-      lcd.print("> Select file");
-      break;
-    case SCREEN_FILE:    // Select file
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Select file - " + nb_files);
-      lcd.setCursor(0, 1);
-      getfilename(index_files);
-      lcd.print("> " + String(filename));
-      break;
-    case SCREEN_PRINT:    // Printing
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Printing...");
-      break;
-    case SCREEN_CALIBRATE: // Calibration
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Calibration");
-      lcd.setCursor(0, 1);
-      lcd.print(calibration_labels[calibration_step]);
-      break;
-    } 
-
-  }
 }
 
 void getfilename(const uint8_t nr)

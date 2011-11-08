@@ -29,4 +29,7 @@
   void lcd_status();
   void lcd_status(const char* message);
 
+  void key_interaction(const uint8_t key);
+  void screen_display();
+
 #endif
