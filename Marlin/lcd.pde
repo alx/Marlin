@@ -3,20 +3,11 @@
 char messagetext[LCD_WIDTH]="";
 unsigned long previous_millis_lcd=0;
 
-int previous_menu = -1;
-int current_menu = 0;
-// 0. Initializing
-// 1. Main Menu
-// 2. Select File
-// 3. Printing
+int previous_screen = -1;
+int current_screen = SCREEN_HOME;
 
 int key = -1;
 int oldkey = -1;
-// 0. right
-// 1. up
-// 2. down
-// 3. left
-// 4. ok
 
 void lcd_init()
 {
@@ -44,24 +35,24 @@ void lcd_status()
   {
     oldkey = key;
 
-    switch(current_menu){
-    case 1: // Main Menu
+    switch(current_screen){
+    case SCREEN_HOME: // Main Menu
       switch(key){
         case JOY_OK:
         // goto select file
-        current_menu = 2;
+        current_screen = SCREEN_FILE;
         break;
       }
       break;
-    case 2: // Select file
+    case SCREEN_FILE: // Select file
       switch(key){
         case JOY_LEFT:
         // return to main menu
-        current_menu = 1;
+        current_screen = SCREEN_HOME;
         break;
         case JOY_OK:
         // load printing
-        current_menu = 3;
+        current_screen = SCREEN_PRINT;
         break;
       }
       break;
@@ -73,8 +64,8 @@ void lcd_status()
   if(previous_menu != current_menu){
     previous_menu = current_menu;
 
-    switch (current_menu) {
-    case 0:    // Initializing
+    switch (current_screen) {
+    case SCREEN_INIT:    // Initializing
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Marlin");
@@ -82,23 +73,23 @@ void lcd_status()
       lcd.print(version_string);
       lcd.setCursor(0, 1);
       lcd.print("initializing...");
-      current_menu = 1;
+      current_screen = SCREEN_HOME;
       break;
-    case 1:    // Main Menu
+    case SCREEN_HOME:    // Main Menu
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("Main Menu");
+      lcd.print("Marlin");
       lcd.setCursor(0, 1);
       lcd.print("> Select file");
       break;
-    case 2:    // Select file
+    case SCREEN_FILE:    // Select file
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Select file");
       lcd.setCursor(0, 1);
       lcd.print("> file1");
       break;
-    case 3:    // Printing
+    case SCREEN_PRINT:    // Printing
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Printing...");

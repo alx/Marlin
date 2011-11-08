@@ -9,6 +9,11 @@
   #define JOY_LEFT  3
   #define JOY_OK    4
 
+  #define SCREEN_INIT  0
+  #define SCREEN_HOME  1
+  #define SCREEN_FILE  2
+  #define SCREEN_PRINT 3
+
   Deuligne lcd;
 
   void lcd_init();
