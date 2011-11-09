@@ -1,45 +1,49 @@
 #ifdef DEULIGNE_LCD
 
-# SCREENS
+/* 
 
-## SCREEN_INIT
-#
-# ·----------------·
-# |MARLIN v0.9.3.3-|
-# |    Welcome     |
-# ·----------------·
+SCREENS
 
-## SCREEN_HOME
-#
-# ·----------------·
-# |<Prepare  Files>|
-# |     vAbout     |
-# ·----------------·
+SCREEN_INIT
 
-## SCREEN_FILE
-#
-# ·----------------·
-# |Files    XXX/YYY|
-# |>File01      OK>|
-# ·----------------·
+·----------------·
+|MARLIN v0.9.3.3-|
+|    Welcome     |
+·----------------·
 
-## SCREEN_PRINT
-#
-# ·----------------·
-# |  Printing...   |
-# |Gco: XXXXX/YYYYY|
-# ·----------------·
+SCREEN_HOME
 
-## SCREEN_CALIBRATE
-#
-# ·----------------·
-# |Calib  -  Step 1|
-# |LABEL_PREP   OK>|
-# ·----------------·
+·----------------·
+|<Prepare  Files>|
+|     vAbout     |
+·----------------·
 
-## Custom chars
+SCREEN_FILE
 
-# Do not use, for char template only
+·----------------·
+|Files    XXX/YYY|
+|>File01      OK>|
+·----------------·
+
+SCREEN_PRINT
+
+·----------------·
+|  Printing...   |
+|Gco: XXXXX/YYYYY|
+·----------------·
+
+SCREEN_CALIBRATE
+
+·----------------·
+|Calib  -  Step 1|
+|LABEL_PREP   OK>|
+·----------------·
+
+*/
+
+//Custom chars
+
+//Do not use, for char template only
 byte EMPTY_CHAR [8]={
   B00000,
   B00000,
@@ -50,7 +54,7 @@ byte EMPTY_CHAR [8]={
   B00000
 };
 
-## Arrows custom chars
+//Arrows custom chars
 
 byte ARROW_UP [8]={
   B00000,
@@ -93,7 +97,7 @@ byte ARROW_RIGHT [8]={
 };
 
 
-## Lcd variables
+//Lcd variables
 
 char messagetext[LCD_WIDTH]="";
 unsigned long previous_millis_lcd=0;
@@ -103,12 +107,12 @@ int current_screen = SCREEN_HOME;
 
 boolean lcd_refresh = false;
 
-## Joystick Variables
+//Joystick Variables
 
 int key = -1;
 int oldkey = -1;
 
-## Calibration variables
+//Calibration variables
 
 char calibration_labels[5][12] = {
   "Prepare   ",
@@ -118,7 +122,7 @@ char calibration_labels[5][12] = {
   "Extrude   " };
 int calibration_step = CALIBRATION_PREPARE;
 
-## Files Variables
+//Files Variables
 
 int index_files = 0;
 int nb_files = getnrfilenames();
