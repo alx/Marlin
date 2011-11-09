@@ -37,6 +37,63 @@
 # |LABEL_PREP   OK>|
 # ·----------------·
 
+## Custom chars
+
+# Do not use, for char template only
+byte EMPTY_CHAR [8]={
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000
+};
+
+## Arrows custom chars
+
+byte ARROW_UP [8]={
+  B00000,
+  B00000,
+  B00100,
+  B01110,
+  B11111,
+  B00000,
+  B00000
+};
+
+byte ARROW_DOWN [8]={
+  B00000,
+  B00000,
+  B11111,
+  B01110,
+  B00100,
+  B00000,
+  B00000
+};
+
+byte ARROW_LEFT [8]={
+  B00000,
+  B01000,
+  B01100,
+  B01110,
+  B01100,
+  B01000,
+  B00000
+};
+
+byte ARROW_RIGHT [8]={
+  B00000,
+  B00010,
+  B00110,
+  B01110,
+  B00110,
+  B00010,
+  B00000
+};
+
+
+## Lcd variables
 
 char messagetext[LCD_WIDTH]="";
 unsigned long previous_millis_lcd=0;
@@ -44,10 +101,14 @@ unsigned long previous_millis_lcd=0;
 int previous_screen = -1;
 int current_screen = SCREEN_HOME;
 
+boolean lcd_refresh = false;
+
+## Joystick Variables
+
 int key = -1;
 int oldkey = -1;
 
-boolean lcd_refresh = false;
+## Calibration variables
 
 char calibration_labels[5][12] = {
   "Prepare   ",
@@ -57,12 +118,18 @@ char calibration_labels[5][12] = {
   "Extrude   " };
 int calibration_step = CALIBRATION_PREPARE;
 
+## Files Variables
+
 int index_files = 0;
 int nb_files = getnrfilenames();
 
 void lcd_init()
 {
   lcd.init();
+  lcd.createChar(0,ARROW_UP);
+  lcd.createChar(1,ARROW_DOWN);
+  lcd.createChar(2,ARROW_LEFT);
+  lcd.createChar(3,ARROW_RIGHT);
   lcd_status();
 }
 
