@@ -23,6 +23,10 @@
   #define CALIBRATION_EXTRUDE           4
   #define CALIBRATION_DISABLE_STEPPERS  5
 
+  #define CONTROL_XY   0
+  #define CONTROL_Z    1
+  #define CONTROL_TEMP 2
+
   //Custom chars
 
   //Do not use, for char template only
@@ -91,6 +95,17 @@
   B11111,
   B01110,
   B00100
+  };
+
+  #define CHAR_ARROW_CROSS 5
+  byte ARROW_CROSS [8]={
+  B00000,
+  B00100,
+  B01110,
+  B11011,
+  B01110,
+  B00100,
+  B00000
   };
 
   Deuligne lcd;

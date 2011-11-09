@@ -20,16 +20,19 @@ SCREEN_HOME
 
 SCREEN_MANUAL
 
+  CONTROL_XY
 ·----------------·
 |Control: X/Y    |
 |x: XXXX  y: YYYY|
 ·----------------·
 
+  CONTROL_Z
 ·----------------·
 |Control: Z      |
 |z: ZZZZ         |
 ·----------------·
 
+  CONTROL_TEMP
 ·----------------·
 |Control: temp   |
 |temp: XXXX      |
@@ -84,6 +87,15 @@ char calibration_labels[5][12] = {
   "Extrude   " };
 int calibration_step = CALIBRATION_PREPARE;
 
+//Calibration variables
+
+char control_labels[3][12] = {
+  "X/Y",
+  "Z",
+  "Temp"
+  };
+int control_step = CONTROL_XY;
+
 //Files Variables
 
 int index_files = 0;
@@ -97,6 +109,7 @@ void lcd_init()
   lcd.createChar(CHAR_ARROW_LEFT,ARROW_LEFT);
   lcd.createChar(CHAR_ARROW_RIGHT,ARROW_RIGHT);
   lcd.createChar(CHAR_ARROW_UPDOWN,ARROW_UPDOWN);
+  lcd.createChar(CHAR_ARROW_CROSS,ARROW_CROSS);
   lcd_status();
 }
 
@@ -211,6 +224,29 @@ void screen_display(){
 
       lcd.setCursor(0, 0);
       lcd.print("Control: ");
+      lcd.print(control_labels[control_step]);
+
+      lcd.setCursor(0, 1);
+      switch(control_step){
+        case CONTROL_XY:
+          lcd.print("x: XXX y: YYY ");
+          lcd.setCursor(15, 1);
+          lcd.write(CHAR_ARROW_CROSS);
+        break;
+        case CONTROL_Z:
+          lcd.print("z: ZZZZ");
+          lcd.setCursor(15, 1);
+          lcd.write(CHAR_ARROW_UPDOWN);
+        break;
+        case CONTROL_TEMP:
+          lcd.print("temp: ");
+          lcd.print(ftostr3(analog2temp(current_raw)));
+          lcd.print("/");
+          lcd.print(ftostr3(analog2temp(target_raw)));
+          lcd.setCursor(15, 1);
+          lcd.write(CHAR_ARROW_UPDOWN);
+        break;
+      }
 
     break;
   }
@@ -311,10 +347,58 @@ void key_interaction(const uint8_t key){
       }
     break;
     case SCREEN_MANUAL: // Manual screen
+      lcd_refresh = true;
       switch(key){
+        case JOY_DOWN:
+          switch(control_step){
+            case CONTROL_XY:
+              enquecommand("G91");
+              enquecommand("G1 X10 Y0 E10");
+            break;
+            case CONTROL_Z:
+              enquecommand("G91");
+              enquecommand("G1 Z-10 E10");
+            break;
+            case CONTROL_TEMP:
+            break;
+          }
+        break;
+        case JOY_UP:
+          switch(control_step){
+            case CONTROL_XY:
+              enquecommand("G91");
+              enquecommand("G1 X-10 Y0 E10");
+            break;
+            case CONTROL_Z:
+              enquecommand("G91");
+              enquecommand("G1 Z10 E10");
+            break;
+            case CONTROL_TEMP:
+            break;
+          }
+        break;
+        case JOY_LEFT:
+          switch(control_step){
+            case CONTROL_XY:
+              enquecommand("G91");
+              enquecommand("G1 X0 Y-10 E10");
+            break;
+          }
+        break;
+        case JOY_RIGHT:
+          switch(control_step){
+            case CONTROL_XY:
+              enquecommand("G91");
+              enquecommand("G1 X0 Y10 E10");
+            break;
+          }
+        break;
         case JOY_OK:
-        // return to home menu
-        current_screen = SCREEN_HOME;
+          control_step += 1;
+          if(control_step > 3){
+            control_step = 0;
+            current_screen = SCREEN_HOME;
+          }
         break;
       }
     break;
@@ -372,6 +456,20 @@ uint8_t getnrfilenames()
   }
   return cnt;
 #endif
+}
+
+char conv[8];
+
+///  convert float to string with +123.4 format
+char *ftostr3(const float &x)
+{
+  //sprintf(conv,"%5.1f",x);
+  int xx=x;
+  conv[0]=(xx/100)%10+'0';
+  conv[1]=(xx/10)%10+'0';
+  conv[2]=(xx)%10+'0';
+  conv[3]=0;
+  return conv;
 }
 
 
