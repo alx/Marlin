@@ -122,7 +122,7 @@ void screen_display(){
       lcd.print("MARLIN v0.9.3.3-");
 
       lcd.setCursor(0, 1);
-      lcd.print("    Welcome     ");
+      lcd.print("  (╯°□°）╯︵ ┻━┻");
 
       delay(1000);
       current_screen = SCREEN_HOME;
