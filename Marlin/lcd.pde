@@ -87,7 +87,7 @@ char calibration_labels[5][12] = {
   "Extrude   " };
 int calibration_step = CALIBRATION_PREPARE;
 
-//Calibration variables
+//Control variables
 
 char control_labels[3][12] = {
   "X/Y",
@@ -95,6 +95,11 @@ char control_labels[3][12] = {
   "Temp"
   };
 int control_step = CONTROL_XY;
+
+int control_init_x;
+int control_init_y;
+int control_init_z;
+int control_init_temp;
 
 //Files Variables
 
@@ -111,6 +116,11 @@ void lcd_init()
   lcd.createChar(CHAR_ARROW_UPDOWN,ARROW_UPDOWN);
   lcd.createChar(CHAR_ARROW_CROSS,ARROW_CROSS);
   lcd_status();
+
+  control_init_x = 0;
+  control_init_y = 0;
+  control_init_z = 0;
+  control_init_temp = 40;
 }
 
 void clear()
@@ -229,12 +239,16 @@ void screen_display(){
       lcd.setCursor(0, 1);
       switch(control_step){
         case CONTROL_XY:
-          lcd.print("x: XXX y: YYY ");
+          lcd.print("x: ");
+          lcd.print(control_init_x);
+          lcd.print(" y: ");
+          lcd.print(control_init_y);
           lcd.setCursor(15, 1);
           lcd.write(CHAR_ARROW_CROSS);
         break;
         case CONTROL_Z:
-          lcd.print("z: ZZZZ");
+          lcd.print("z: ");
+          lcd.print(control_init_z);
           lcd.setCursor(15, 1);
           lcd.write(CHAR_ARROW_UPDOWN);
         break;
@@ -352,34 +366,43 @@ void key_interaction(const uint8_t key){
         case JOY_DOWN:
           switch(control_step){
             case CONTROL_XY:
+              control_init_x += 10;
               enquecommand("G91");
               enquecommand("G1 X10 Y0 E10");
             break;
             case CONTROL_Z:
+              control_init_z -= 10;
               enquecommand("G91");
               enquecommand("G1 Z-10 E10");
             break;
             case CONTROL_TEMP:
+              control_init_temp -= 10;
+              temp2analog(control_init_temp);
             break;
           }
         break;
         case JOY_UP:
           switch(control_step){
             case CONTROL_XY:
+              control_init_x -= 10;
               enquecommand("G91");
               enquecommand("G1 X-10 Y0 E10");
             break;
             case CONTROL_Z:
+              control_init_z += 10;
               enquecommand("G91");
               enquecommand("G1 Z10 E10");
             break;
             case CONTROL_TEMP:
+              control_init_temp += 10;
+              temp2analog(control_init_temp);
             break;
           }
         break;
         case JOY_LEFT:
           switch(control_step){
             case CONTROL_XY:
+              control_init_y -= 10;
               enquecommand("G91");
               enquecommand("G1 X0 Y-10 E10");
             break;
@@ -388,6 +411,7 @@ void key_interaction(const uint8_t key){
         case JOY_RIGHT:
           switch(control_step){
             case CONTROL_XY:
+              control_init_y += 10;
               enquecommand("G91");
               enquecommand("G1 X0 Y10 E10");
             break;
@@ -395,7 +419,7 @@ void key_interaction(const uint8_t key){
         break;
         case JOY_OK:
           control_step += 1;
-          if(control_step > 3){
+          if(control_step > CONTROL_TEMP){
             control_step = 0;
             current_screen = SCREEN_HOME;
           }
