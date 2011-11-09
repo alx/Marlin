@@ -41,62 +41,6 @@ SCREEN_CALIBRATE
 
 */
 
-//Custom chars
-
-//Do not use, for char template only
-byte EMPTY_CHAR [8]={
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000
-};
-
-//Arrows custom chars
-
-byte ARROW_UP [8]={
-  B00000,
-  B00000,
-  B00100,
-  B01110,
-  B11111,
-  B00000,
-  B00000
-};
-
-byte ARROW_DOWN [8]={
-  B00000,
-  B00000,
-  B11111,
-  B01110,
-  B00100,
-  B00000,
-  B00000
-};
-
-byte ARROW_LEFT [8]={
-  B00000,
-  B01000,
-  B01100,
-  B01110,
-  B01100,
-  B01000,
-  B00000
-};
-
-byte ARROW_RIGHT [8]={
-  B00000,
-  B00010,
-  B00110,
-  B01110,
-  B00110,
-  B00010,
-  B00000
-};
-
-
 //Lcd variables
 
 char messagetext[LCD_WIDTH]="";
@@ -130,10 +74,10 @@ int nb_files = getnrfilenames();
 void lcd_init()
 {
   lcd.init();
-  lcd.createChar(0,ARROW_UP);
-  lcd.createChar(1,ARROW_DOWN);
-  lcd.createChar(2,ARROW_LEFT);
-  lcd.createChar(3,ARROW_RIGHT);
+  lcd.createChar(CHAR_ARROW_UP,ARROW_UP);
+  lcd.createChar(CHAR_ARROW_DOWN,ARROW_DOWN);
+  lcd.createChar(CHAR_ARROW_LEFT,ARROW_LEFT);
+  lcd.createChar(CHAR_ARROW_RIGHT,ARROW_RIGHT);
   lcd_status();
 }
 
@@ -181,6 +125,7 @@ void screen_display(){
     case SCREEN_HOME:    // Main Menu
       lcd.clear();
       lcd.setCursor(0, 0);
+      lcd.write(CHAR_ARROW_LEFT);
       lcd.print("<Prepare  Files>");
       lcd.setCursor(0, 1);
       lcd.print("     vAbout     ");
@@ -220,6 +165,7 @@ void key_interaction(const uint8_t key){
           current_screen = SCREEN_FILE;
         break;
         case JOY_DOWN:
+        case JOY_OK:
           current_screen = SCREEN_INIT;
         break;
       }
