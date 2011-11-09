@@ -112,43 +112,58 @@ void lcd_status()
 }
 
 void screen_display(){
+
+  lcd.clear();
+
   switch (current_screen) {
     case SCREEN_INIT:    // Initializing
-      lcd.clear();
+
       lcd.setCursor(0, 0);
       lcd.print("MARLIN v0.9.3.3-");
+
       lcd.setCursor(0, 1);
       lcd.print("    Welcome     ");
+
       delay(1000);
       current_screen = SCREEN_HOME;
+
     break;
     case SCREEN_HOME:    // Main Menu
-      lcd.clear();
+
       lcd.setCursor(0, 0);
       lcd.write(CHAR_ARROW_LEFT);
-      lcd.print("<Prepare  Files>");
-      lcd.setCursor(0, 1);
-      lcd.print("     vAbout     ");
+      lcd.print("Prepare  Files");
+      lcd.write(CHAR_ARROW_RIGHT);
+
+      lcd.setCursor(5, 1);
+      lcd.write(CHAR_ARROW_DOWN);
+      lcd.print("About");
+
     break;
     case SCREEN_FILE:    // Select file
-      lcd.clear();
+
       lcd.setCursor(0, 0);
       lcd.print("Select file - " + nb_files);
+
       lcd.setCursor(0, 1);
       getfilename(index_files);
       lcd.print("> " + String(filename));
+
     break;
     case SCREEN_PRINT:    // Printing
-      lcd.clear();
+
       lcd.setCursor(0, 0);
       lcd.print("Printing...");
+
     break;
     case SCREEN_CALIBRATE: // Calibration
-      lcd.clear();
+
       lcd.setCursor(0, 0);
       lcd.print("Calibration");
+
       lcd.setCursor(0, 1);
       lcd.print(calibration_labels[calibration_step]);
+
     break;
   }
 }

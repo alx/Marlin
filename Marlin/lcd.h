@@ -59,8 +59,8 @@
   B00000
   };
 
-  #define CHAR_ARROW_LEFT 2
-  byte ARROW_LEFT [8]={
+  #define CHAR_ARROW_RIGHT 2
+  byte ARROW_RIGHT [8]={
   B00000,
   B01000,
   B01100,
@@ -70,8 +70,8 @@
   B00000
   };
 
-  #define CHAR_ARROW_RIGHT 3
-  byte ARROW_RIGHT [8]={
+  #define CHAR_ARROW_LEFT 3
+  byte ARROW_LEFT [8]={
   B00000,
   B00010,
   B00110,
