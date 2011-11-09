@@ -159,10 +159,14 @@ void screen_display(){
     case SCREEN_CALIBRATE: // Calibration
 
       lcd.setCursor(0, 0);
-      lcd.print("Calibration");
+      lcd.print("Calib  -  Step ");
+      lcd.print(calibration_step);
 
       lcd.setCursor(0, 1);
       lcd.print(calibration_labels[calibration_step]);
+      lcd.setCursor(13, 1);
+      lcd.print("OK");
+      lcd.write(CHAR_ARROW_RIGHT);
 
     break;
   }
