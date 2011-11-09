@@ -153,7 +153,7 @@ void screen_display(){
       lcd.print("Prepare  Files");
       lcd.write(CHAR_ARROW_RIGHT);
 
-      lcd.setCursor(5, 1);
+      lcd.setCursor(0, 1);
       lcd.write(CHAR_ARROW_DOWN);
       lcd.print("About   Manual");
       lcd.write(CHAR_ARROW_UP);
