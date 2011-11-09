@@ -162,11 +162,17 @@ void screen_display(){
     case SCREEN_FILE:    // Select file
 
       lcd.setCursor(0, 0);
-      lcd.print("Select file - " + nb_files);
+      lcd.print("Files    XX");
+      lcd.print(index_files);
+      lcd.print("/YY");
+      lcd.print(nb_files);
 
       lcd.setCursor(0, 1);
       getfilename(index_files);
-      lcd.print("> " + String(filename));
+      lcd.print(filename);
+      lcd.setCursor(13, 1);
+      lcd.print("OK");
+      lcd.write(CHAR_ARROW_RIGHT);
 
     break;
     case SCREEN_PRINT:    // Printing
