@@ -188,6 +188,12 @@ void screen_display(){
       lcd.write(CHAR_ARROW_RIGHT);
 
     break;
+    case SCREEN_MANUAL:    // Manual control
+
+      lcd.setCursor(0, 0);
+      lcd.print("Control: ");
+
+    break;
   }
 }
 
@@ -201,6 +207,9 @@ void key_interaction(const uint8_t key){
         break;
         case JOY_RIGHT:
           current_screen = SCREEN_FILE;
+        break;
+        case JOY_UP:
+          current_screen = SCREEN_MANUAL;
         break;
         case JOY_DOWN:
         case JOY_OK:
@@ -282,6 +291,15 @@ void key_interaction(const uint8_t key){
         break;
       }
     break;
+    case SCREEN_MANUAL: // Manual screen
+      switch(key){
+        case JOY_OK:
+        // return to home menu
+        current_screen = SCREEN_HOME;
+        break;
+      }
+    break;
+
   }
 
 }
