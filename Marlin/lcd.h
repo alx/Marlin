@@ -14,6 +14,7 @@
   #define SCREEN_FILE      2
   #define SCREEN_PRINT     3
   #define SCREEN_CALIBRATE 4
+  #define SCREEN_MANUAL    5
 
   #define CALIBRATION_PREPARE           0
   #define CALIBRATION_HOME              1

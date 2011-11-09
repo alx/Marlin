@@ -15,8 +15,26 @@ SCREEN_HOME
 
 ·----------------·
 |<Prepare  Files>|
-|     vAbout     |
+|vAbout   Manual^|
 ·----------------·
+
+SCREEN_MANUAL
+
+·----------------·
+|Control: X/Y    |
+|x: XXXX  y: YYYY|
+·----------------·
+
+·----------------·
+|Control: Z      |
+|z: ZZZZ         |
+·----------------·
+
+·----------------·
+|Control: temp   |
+|temp: XXXX      |
+·----------------·
+
 
 SCREEN_FILE
 
@@ -137,7 +155,8 @@ void screen_display(){
 
       lcd.setCursor(5, 1);
       lcd.write(CHAR_ARROW_DOWN);
-      lcd.print("About");
+      lcd.print("About   Manual");
+      lcd.write(CHAR_ARROW_UP);
 
     break;
     case SCREEN_FILE:    // Select file
@@ -160,7 +179,7 @@ void screen_display(){
 
       lcd.setCursor(0, 0);
       lcd.print("Calib  -  Step ");
-      lcd.print(calibration_step);
+      lcd.print(calibration_step + 1);
 
       lcd.setCursor(0, 1);
       lcd.print(calibration_labels[calibration_step]);
@@ -236,6 +255,7 @@ void key_interaction(const uint8_t key){
         // return to main menu
         current_screen = SCREEN_HOME;
         break;
+        case JOY_RIGHT:
         case JOY_OK:
         calibration_step += 1;
         switch (calibration_step){
