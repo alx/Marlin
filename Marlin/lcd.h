@@ -82,6 +82,17 @@
   B00000
   };
 
+  #define CHAR_ARROW_UPDOWN 4
+  byte ARROW_UPDOWN [8]={
+  B00100,
+  B01110,
+  B11111,
+  B00000,
+  B11111,
+  B01110,
+  B00100
+  };
+
   Deuligne lcd;
   char filename[11];
 

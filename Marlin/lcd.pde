@@ -87,7 +87,7 @@ int calibration_step = CALIBRATION_PREPARE;
 //Files Variables
 
 int index_files = 0;
-int nb_files = getnrfilenames();
+int nb_files = 0;
 
 void lcd_init()
 {
@@ -96,6 +96,7 @@ void lcd_init()
   lcd.createChar(CHAR_ARROW_DOWN,ARROW_DOWN);
   lcd.createChar(CHAR_ARROW_LEFT,ARROW_LEFT);
   lcd.createChar(CHAR_ARROW_RIGHT,ARROW_RIGHT);
+  lcd.createChar(CHAR_ARROW_UPDOWN,ARROW_UPDOWN);
   lcd_status();
 }
 
@@ -161,9 +162,21 @@ void screen_display(){
     break;
     case SCREEN_FILE:    // Select file
 
+      nb_files = getnrfilenames();
+
       lcd.setCursor(0, 0);
-      lcd.print("Files    XX");
-      lcd.print(index_files);
+      lcd.print("Files  ");
+
+      if(index_files == 0){
+        lcd.write(CHAR_ARROW_DOWN);
+      } else if (index_files < (nb_files - 1)){
+        lcd.write(CHAR_ARROW_UPDOWN);
+      } else {
+        lcd.write(CHAR_ARROW_UP);
+      }
+
+      lcd.print(" XX");
+      lcd.print(index_files + 1);
       lcd.print("/YY");
       lcd.print(nb_files);
 
@@ -225,14 +238,14 @@ void key_interaction(const uint8_t key){
     break;
     case SCREEN_FILE: // Select file
       switch(key){
-        case JOY_UP:
+        case JOY_DOWN:
           index_files = index_files + 1;
           if(index_files >= nb_files){
             index_files = nb_files - 1;
           }
           lcd_refresh = true;
           break;
-        case JOY_DOWN:
+        case JOY_UP:
           index_files = index_files - 1;
           if(index_files < 0){
             index_files = 0;
@@ -323,11 +336,11 @@ void getfilename(const uint8_t nr)
     if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
     if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
     if(p.name[8]!='G') continue;
-    if(p.name[9]=='~') continue;
+    if(p.name[9]!='C') continue;
+    if(p.name[10]!='O') continue;
     if(cnt++!=nr) continue;
-    Serial.println((char*)p.name);
     uint8_t writepos=0;
-    for (uint8_t i = 0; i < 11; i++) 
+    for (uint8_t i = 0; i < 8; i++) 
     {
       if (p.name[i] == ' ') continue;
       if (i == 8) {
@@ -348,11 +361,13 @@ uint8_t getnrfilenames()
   uint8_t cnt=0;
   while (root.readDir(p) > 0)
   {
+    //Serial.println((char*)p.name);
     if (p.name[0] == DIR_NAME_FREE) break;
     if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
     if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
     if(p.name[8]!='G') continue;
-    if(p.name[9]=='~') continue;
+    if(p.name[9]!='C') continue;
+    if(p.name[10]!='O') continue;
     cnt++;
   }
   return cnt;
