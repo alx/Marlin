@@ -324,8 +324,6 @@ void key_interaction(const uint8_t key){
           char cmd[30];
           for(int i=0;i<strlen(filename);i++)
             filename[i]=tolower(filename[i]);
-          Serial.println("filename M23");
-          Serial.println(filename);
           sprintf(cmd,"M23 %s",filename);
           enquecommand(cmd);
           enquecommand("M24");
@@ -484,7 +482,7 @@ uint8_t getnrfilenames()
   uint8_t cnt=0;
   while (root.readDir(p) > 0)
   {
-    Serial.println((char*)p.name);
+    //Serial.println((char*)p.name);
     if (p.name[0] == DIR_NAME_FREE) break;
     if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
     if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
