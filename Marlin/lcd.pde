@@ -106,6 +106,9 @@ int control_init_temp;
 int index_files = 0;
 int nb_files = 0;
 
+//Progress variables
+int print_progress = 0;
+
 void lcd_init()
 {
   lcd.init();
@@ -214,7 +217,17 @@ void screen_display(){
     case SCREEN_PRINT:    // Printing
 
       lcd.setCursor(0, 0);
-      lcd.print("Printing...");
+      lcd.print("  Printing...");
+
+      lcd.setCursor(0, 1);
+      switch(print_progress){
+        case PROGRESS_GCODE:
+          lcd.print("Gco: XXXX/YYYY");
+        break;
+        case PROGRESS_TEMP:
+          lcd.print("Temp: XXX/YYY");
+        break;
+      }
 
     break;
     case SCREEN_CALIBRATE: // Calibration
@@ -309,9 +322,11 @@ void key_interaction(const uint8_t key){
         case JOY_RIGHT:
         case JOY_OK:
           char cmd[30];
-          sprintf(cmd,"M23 %s",filename);
           for(int i=0;i<strlen(filename);i++)
             filename[i]=tolower(filename[i]);
+          Serial.println("filename M23");
+          Serial.println(filename);
+          sprintf(cmd,"M23 %s",filename);
           enquecommand(cmd);
           enquecommand("M24");
           // load printing
@@ -448,7 +463,7 @@ void getfilename(const uint8_t nr)
     if(p.name[10]!='O') continue;
     if(cnt++!=nr) continue;
     uint8_t writepos=0;
-    for (uint8_t i = 0; i < 8; i++) 
+    for (uint8_t i = 0; i < 11; i++) 
     {
       if (p.name[i] == ' ') continue;
       if (i == 8) {
@@ -469,7 +484,7 @@ uint8_t getnrfilenames()
   uint8_t cnt=0;
   while (root.readDir(p) > 0)
   {
-    //Serial.println((char*)p.name);
+    Serial.println((char*)p.name);
     if (p.name[0] == DIR_NAME_FREE) break;
     if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
     if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;

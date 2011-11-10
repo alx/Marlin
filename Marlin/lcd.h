@@ -27,6 +27,9 @@
   #define CONTROL_Z    1
   #define CONTROL_TEMP 2
 
+  #define PROGRESS_GCODE  0
+  #define PROGRESS_TEMP   1
+
   //Custom chars
 
   //Do not use, for char template only
