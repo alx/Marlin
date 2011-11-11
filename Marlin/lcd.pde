@@ -271,7 +271,7 @@ void screen_display(){
 
           lcd.setCursor(10, 0);
           lcd.write(CHAR_DELTA);
-          lcd.setCursor(12, 0;
+          lcd.setCursor(12, 0);
           lcd.print(control_step_temp);
 
           lcd.setCursor(0, 1);
