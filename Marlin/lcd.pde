@@ -396,7 +396,7 @@ void key_interaction(const uint8_t key){
             case CONTROL_Z:
               control_init_z -= control_step_z;
               enquecommand("G91");
-              enquecommand("G1 Z-" + control_step_z + " E10");
+              enquecommand("G1 Z-10 E10");
             break;
             case CONTROL_TEMP:
               temp2analog(target_raw - control_init_temp);
@@ -413,7 +413,7 @@ void key_interaction(const uint8_t key){
             case CONTROL_Z:
               control_init_z += control_step_z;
               enquecommand("G91");
-              enquecommand("G1 Z" + control_step_z + " E10");
+              enquecommand("G1 Z10 E10");
             break;
             case CONTROL_TEMP:
               temp2analog(target_raw + control_step_temp);
