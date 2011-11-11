@@ -22,22 +22,21 @@ SCREEN_MANUAL
 
   CONTROL_XY
 ·----------------·
-|Control: X/Y    |
-|x: XXXX  y: YYYY|
+|     Manual     |
+|x: XXX y: YYY  x|
 ·----------------·
 
   CONTROL_Z
 ·----------------·
-|Control: Z      |
-|z: ZZZZ         |
+|     Manual     |
+|z: ZZZ         x|
 ·----------------·
 
   CONTROL_TEMP
 ·----------------·
-|Control: temp   |
-|temp: XXXX      |
+|     Manual     |
+|t: XXX/TTT     x|
 ·----------------·
-
 
 SCREEN_FILE
 
@@ -88,18 +87,15 @@ char calibration_labels[5][12] = {
 int calibration_step = CALIBRATION_PREPARE;
 
 //Control variables
-
-char control_labels[3][12] = {
-  "X/Y",
-  "Z",
-  "Temp"
-  };
 int control_step = CONTROL_XY;
 
 int control_init_x;
 int control_init_y;
 int control_init_z;
 int control_init_temp;
+
+int control_step_z;
+int control_step_temp;
 
 //Files Variables
 
@@ -118,12 +114,16 @@ void lcd_init()
   lcd.createChar(CHAR_ARROW_RIGHT,ARROW_RIGHT);
   lcd.createChar(CHAR_ARROW_UPDOWN,ARROW_UPDOWN);
   lcd.createChar(CHAR_ARROW_CROSS,ARROW_CROSS);
+  lcd.createChar(CHAR_DELTA,DELTA);
   lcd_status();
 
   control_init_x = 0;
   control_init_y = 0;
   control_init_z = 0;
   control_init_temp = 40;
+
+  control_step_z = 10;
+  control_step_temp = 10;
 }
 
 void clear()
@@ -246,32 +246,39 @@ void screen_display(){
     case SCREEN_MANUAL:    // Manual control
 
       lcd.setCursor(0, 0);
-      lcd.print("Control: ");
-      lcd.print(control_labels[control_step]);
+      lcd.print("Manual");
 
-      lcd.setCursor(0, 1);
       switch(control_step){
         case CONTROL_XY:
+          lcd.setCursor(0, 1);
           lcd.print("x: ");
           lcd.print(control_init_x);
           lcd.print(" y: ");
           lcd.print(control_init_y);
-          lcd.setCursor(15, 1);
-          lcd.write(CHAR_ARROW_CROSS);
         break;
         case CONTROL_Z:
+
+          lcd.setCursor(10, 0);
+          lcd.write(CHAR_DELTA);
+          lcd.setCursor(12, 0);
+          lcd.print(control_step_z);
+
+          lcd.setCursor(0, 1);
           lcd.print("z: ");
           lcd.print(control_init_z);
-          lcd.setCursor(15, 1);
-          lcd.write(CHAR_ARROW_UPDOWN);
         break;
         case CONTROL_TEMP:
+
+          lcd.setCursor(10, 0);
+          lcd.write(CHAR_DELTA);
+          lcd.setCursor(12, 0;
+          lcd.print(control_step_temp);
+
+          lcd.setCursor(0, 1);
           lcd.print("temp: ");
           lcd.print(ftostr3(analog2temp(current_raw)));
           lcd.print("/");
           lcd.print(ftostr3(analog2temp(target_raw)));
-          lcd.setCursor(15, 1);
-          lcd.write(CHAR_ARROW_UPDOWN);
         break;
       }
 
@@ -384,12 +391,12 @@ void key_interaction(const uint8_t key){
               enquecommand("G1 X10 Y0 E10");
             break;
             case CONTROL_Z:
-              control_init_z -= 10;
+              control_init_z -= control_step_z;
               enquecommand("G91");
               enquecommand("G1 Z-10 E10");
             break;
             case CONTROL_TEMP:
-              control_init_temp -= 10;
+              control_init_temp -= control_step_temp;
               temp2analog(control_init_temp);
             break;
           }
@@ -402,12 +409,12 @@ void key_interaction(const uint8_t key){
               enquecommand("G1 X-10 Y0 E10");
             break;
             case CONTROL_Z:
-              control_init_z += 10;
+              control_init_z += control_step_z;
               enquecommand("G91");
               enquecommand("G1 Z10 E10");
             break;
             case CONTROL_TEMP:
-              control_init_temp += 10;
+              control_init_temp += control_step_temp;
               temp2analog(control_init_temp);
             break;
           }
@@ -419,6 +426,14 @@ void key_interaction(const uint8_t key){
               enquecommand("G91");
               enquecommand("G1 X0 Y-10 E10");
             break;
+            case CONTROL_Z:
+              if(control_step_z > 1)
+                control_step_z -= 1;
+            break;
+            case CONTROL_TEMP:
+              if(control_step_temp > 1)
+                control_step_temp -= 1;
+            break;
           }
         break;
         case JOY_RIGHT:
@@ -427,6 +442,12 @@ void key_interaction(const uint8_t key){
               control_init_y += 10;
               enquecommand("G91");
               enquecommand("G1 X0 Y10 E10");
+            break;
+            case CONTROL_Z:
+              control_step_z += 1;
+            break;
+            case CONTROL_TEMP:
+              control_step_temp += 1;
             break;
           }
         break;

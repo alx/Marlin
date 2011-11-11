@@ -111,6 +111,17 @@
   B00000
   };
 
+  #define CHAR_DELTA 6
+  byte DELTA [8]={
+  B00000,
+  B00000,
+  B00100,
+  B01010,
+  B10001,
+  B11111,
+  B00000
+  };
+
   Deuligne lcd;
   char filename[11];
 
