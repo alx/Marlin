@@ -279,6 +279,9 @@ void screen_display(){
           lcd.print(ftostr3(analog2temp(current_raw)));
           lcd.print("/");
           lcd.print(ftostr3(analog2temp(target_raw)));
+
+          delay(1000);
+          lcd_refresh = true;
         break;
       }
 
@@ -393,11 +396,10 @@ void key_interaction(const uint8_t key){
             case CONTROL_Z:
               control_init_z -= control_step_z;
               enquecommand("G91");
-              enquecommand("G1 Z-10 E10");
+              enquecommand("G1 Z-" + control_step_z + " E10");
             break;
             case CONTROL_TEMP:
-              control_init_temp -= control_step_temp;
-              temp2analog(control_init_temp);
+              temp2analog(target_raw - control_init_temp);
             break;
           }
         break;
@@ -411,11 +413,10 @@ void key_interaction(const uint8_t key){
             case CONTROL_Z:
               control_init_z += control_step_z;
               enquecommand("G91");
-              enquecommand("G1 Z10 E10");
+              enquecommand("G1 Z" + control_step_z + " E10");
             break;
             case CONTROL_TEMP:
-              control_init_temp += control_step_temp;
-              temp2analog(control_init_temp);
+              temp2analog(target_raw + control_step_temp);
             break;
           }
         break;
