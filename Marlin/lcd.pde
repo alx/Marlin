@@ -105,7 +105,7 @@ int nb_files = 0;
 //Progress variables
 int print_progress = 0;
 
-void lcd_init()
+void deuligne_init()
 {
   lcd.init();
   lcd.createChar(CHAR_ARROW_UP,ARROW_UP);
@@ -115,7 +115,7 @@ void lcd_init()
   lcd.createChar(CHAR_ARROW_UPDOWN,ARROW_UPDOWN);
   lcd.createChar(CHAR_ARROW_CROSS,ARROW_CROSS);
   lcd.createChar(CHAR_DELTA,DELTA);
-  lcd_status();
+  deuligne_status();
 
   control_init_x = 0;
   control_init_y = 0;
@@ -131,12 +131,12 @@ void clear()
   lcd.clear();
 }
 
-void lcd_status(const char* message)
+void deuligne_status(const char* message)
 {
   strncpy(messagetext,message,LCD_WIDTH);
 }
 
-void lcd_status()
+void deuligne_status()
 {
   if(((millis() - previous_millis_lcd) < LCD_UPDATE_INTERVAL)   )
     return;
@@ -167,7 +167,7 @@ void screen_display(){
       lcd.print("MARLIN v0.9.3.3-");
 
       lcd.setCursor(0, 1);
-      lcd.print("  (╯°□°）╯︵ ┻━┻");
+      //lcd.print("  (╯°□°）╯︵ ┻━┻");
 
       delay(1000);
       current_screen = SCREEN_HOME;
@@ -532,7 +532,7 @@ char *ftostr3(const float &x)
 }
 
 
-  #define LCD_MESSAGE(x) lcd_status(x);
-  #define LCD_STATUS lcd_status()
+  #define LCD_MESSAGE(x) deuligne_status(x);
+  #define LCD_STATUS deuligne_status()
 
 #endif

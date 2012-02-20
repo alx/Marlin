@@ -194,6 +194,8 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #endif
 
 #define DEULIGNE_LCD
+#define LCD_WIDTH 16
+#define LCD_HEIGHT 2
 
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/

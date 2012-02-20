@@ -125,9 +125,9 @@
   Deuligne lcd;
   char filename[11];
 
-  void lcd_init();
-  void lcd_status();
-  void lcd_status(const char* message);
+  void deuligne_init();
+  void deuligne_status();
+  void deuligne_status(const char* message);
 
   void key_interaction(const uint8_t key);
   void screen_display();
