@@ -38,6 +38,12 @@
 
 #define VERSION_STRING  "1.0.0 RC1"
 
+#ifdef DEULIGNE_LCD
+  #include "Wire.h"
+  #include <Deuligne.h>
+  #include "lcd.h"
+#endif
+
 // look here for descriptions of gcodes: http://linuxcnc.org/handbook/gcode/g-code.html
 // http://objects.reprap.org/wiki/Mendel_User_Manual:_RepRapGCodes
 
