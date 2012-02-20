@@ -276,9 +276,9 @@ void screen_display(){
 
           lcd.setCursor(0, 1);
           lcd.print("temp: ");
-          lcd.print(ftostr3(analog2temp(current_raw)));
+          lcd.print(ftostr3(analog2temp(current_raw[0], 0)));
           lcd.print("/");
-          lcd.print(ftostr3(analog2temp(target_raw)));
+          lcd.print(ftostr3(analog2temp(target_raw[0], 0)));
 
           delay(1000);
           lcd_refresh = true;
@@ -367,7 +367,7 @@ void key_interaction(const uint8_t key){
             enquecommand("G92 X0 Y0 Z0");
             break;
           case CALIBRATION_PREHEAT:
-            target_raw = temp2analog(170);
+            target_raw = temp2analog(170, 0);
             break;
           case CALIBRATION_EXTRUDE:
             enquecommand("G92 E0");
@@ -399,7 +399,7 @@ void key_interaction(const uint8_t key){
               enquecommand("G1 Z-10 E10");
             break;
             case CONTROL_TEMP:
-              temp2analog(target_raw - control_init_temp);
+              temp2analog(target_raw - control_init_temp, 0);
             break;
           }
         break;
@@ -416,7 +416,7 @@ void key_interaction(const uint8_t key){
               enquecommand("G1 Z10 E10");
             break;
             case CONTROL_TEMP:
-              temp2analog(target_raw + control_step_temp);
+              temp2analog(target_raw + control_step_temp, 0);
             break;
           }
         break;
