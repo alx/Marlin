@@ -1,135 +1,538 @@
 #ifdef DEULIGNE_LCD
 
-  #define LCD_UPDATE_INTERVAL 100
-  #define STATUSTIMEOUT 15000
+/* 
 
-  #define JOY_RIGHT 0
-  #define JOY_UP    1
-  #define JOY_DOWN  2
-  #define JOY_LEFT  3
-  #define JOY_OK    4
+SCREENS
 
-  #define SCREEN_INIT      0
-  #define SCREEN_HOME      1
-  #define SCREEN_FILE      2
-  #define SCREEN_PRINT     3
-  #define SCREEN_CALIBRATE 4
-  #define SCREEN_MANUAL    5
+SCREEN_INIT
 
-  #define CALIBRATION_PREPARE           0
-  #define CALIBRATION_HOME              1
-  #define CALIBRATION_ORIGIN            2
-  #define CALIBRATION_PREHEAT           3
-  #define CALIBRATION_EXTRUDE           4
-  #define CALIBRATION_DISABLE_STEPPERS  5
+·----------------·
+|MARLIN v0.9.3.3-|
+|    Welcome     |
+·----------------·
 
-  #define CONTROL_XY   0
-  #define CONTROL_Z    1
-  #define CONTROL_TEMP 2
+SCREEN_HOME
 
-  #define PROGRESS_GCODE  0
-  #define PROGRESS_TEMP   1
+·----------------·
+|<Prepare  Files>|
+|vAbout   Manual^|
+·----------------·
 
-  //Custom chars
+SCREEN_MANUAL
 
-  //Do not use, for char template only
-  byte EMPTY_CHAR [8]={
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000
-  };
+  CONTROL_XY
+·----------------·
+|     Manual     |
+|x: XXX y: YYY  x|
+·----------------·
 
-  //Arrows custom chars
+  CONTROL_Z
+·----------------·
+|     Manual     |
+|z: ZZZ         x|
+·----------------·
 
-  #define CHAR_ARROW_UP 0
-  byte ARROW_UP [8]={
-  B00000,
-  B00000,
-  B00100,
-  B01110,
-  B11111,
-  B00000,
-  B00000
-  };
+  CONTROL_TEMP
+·----------------·
+|     Manual     |
+|t: XXX/TTT     x|
+·----------------·
 
-  #define CHAR_ARROW_DOWN 1
-  byte ARROW_DOWN [8]={
-  B00000,
-  B00000,
-  B11111,
-  B01110,
-  B00100,
-  B00000,
-  B00000
-  };
+SCREEN_FILE
 
-  #define CHAR_ARROW_RIGHT 2
-  byte ARROW_RIGHT [8]={
-  B00000,
-  B01000,
-  B01100,
-  B01110,
-  B01100,
-  B01000,
-  B00000
-  };
+·----------------·
+|Files    XXX/YYY|
+|>File01      OK>|
+·----------------·
 
-  #define CHAR_ARROW_LEFT 3
-  byte ARROW_LEFT [8]={
-  B00000,
-  B00010,
-  B00110,
-  B01110,
-  B00110,
-  B00010,
-  B00000
-  };
+SCREEN_PRINT
 
-  #define CHAR_ARROW_UPDOWN 4
-  byte ARROW_UPDOWN [8]={
-  B00100,
-  B01110,
-  B11111,
-  B00000,
-  B11111,
-  B01110,
-  B00100
-  };
+·----------------·
+|  Printing...   |
+|Gco: XXXXX/YYYYY|
+·----------------·
 
-  #define CHAR_ARROW_CROSS 5
-  byte ARROW_CROSS [8]={
-  B00000,
-  B00100,
-  B01110,
-  B11011,
-  B01110,
-  B00100,
-  B00000
-  };
+SCREEN_CALIBRATE
 
-  #define CHAR_DELTA 6
-  byte DELTA [8]={
-  B00000,
-  B00000,
-  B00100,
-  B01010,
-  B10001,
-  B11111,
-  B00000
-  };
+·----------------·
+|Calib  -  Step 1|
+|LABEL_PREP   OK>|
+·----------------·
 
-  Deuligne lcd;
-  char filename[11];
+*/
 
-  void lcd_init();
-  void lcd_status();
-  void lcd_status(const char* message);
+//Lcd variables
 
-  void key_interaction(const uint8_t key);
-  void screen_display();
+char messagetext[LCD_WIDTH]="";
+unsigned long previous_millis_lcd=0;
+
+int previous_screen = -1;
+int current_screen = SCREEN_HOME;
+
+boolean lcd_refresh = false;
+
+//Joystick Variables
+
+int key = -1;
+int oldkey = -1;
+
+//Calibration variables
+
+char calibration_labels[5][12] = {
+  "Prepare   ",
+  "Auto Home ",
+  "Set Origin",
+  "Preheat   ",
+  "Extrude   " };
+int calibration_step = CALIBRATION_PREPARE;
+
+//Control variables
+int control_step = CONTROL_XY;
+
+int control_init_x;
+int control_init_y;
+int control_init_z;
+int control_init_temp;
+
+int control_step_z;
+int control_step_temp;
+
+//Files Variables
+
+int index_files = 0;
+int nb_files = 0;
+
+//Progress variables
+int print_progress = 0;
+
+void lcd_init()
+{
+  lcd.init();
+  lcd.createChar(CHAR_ARROW_UP,ARROW_UP);
+  lcd.createChar(CHAR_ARROW_DOWN,ARROW_DOWN);
+  lcd.createChar(CHAR_ARROW_LEFT,ARROW_LEFT);
+  lcd.createChar(CHAR_ARROW_RIGHT,ARROW_RIGHT);
+  lcd.createChar(CHAR_ARROW_UPDOWN,ARROW_UPDOWN);
+  lcd.createChar(CHAR_ARROW_CROSS,ARROW_CROSS);
+  lcd.createChar(CHAR_DELTA,DELTA);
+  lcd_status();
+
+  control_init_x = 0;
+  control_init_y = 0;
+  control_init_z = 0;
+  control_init_temp = 40;
+
+  control_step_z = 10;
+  control_step_temp = 10;
+}
+
+void clear()
+{
+  lcd.clear();
+}
+
+void lcd_status(const char* message)
+{
+  strncpy(messagetext,message,LCD_WIDTH);
+}
+
+void lcd_status()
+{
+  if(((millis() - previous_millis_lcd) < LCD_UPDATE_INTERVAL)   )
+    return;
+
+  key = lcd.get_key();
+  if (key != oldkey)   // if keypress is detected
+  {
+    oldkey = key;
+    key_interaction(key);
+  }
+
+  previous_millis_lcd=millis();
+  if(lcd_refresh || previous_screen != current_screen){
+    previous_screen = current_screen;
+    lcd_refresh = false;
+    screen_display();
+  }
+}
+
+void screen_display(){
+
+  lcd.clear();
+
+  switch (current_screen) {
+    case SCREEN_INIT:    // Initializing
+
+      lcd.setCursor(0, 0);
+      lcd.print("MARLIN v0.9.3.3-");
+
+      lcd.setCursor(0, 1);
+      lcd.print("  (╯°□°）╯︵ ┻━┻");
+
+      delay(1000);
+      current_screen = SCREEN_HOME;
+
+    break;
+    case SCREEN_HOME:    // Main Menu
+
+      lcd.setCursor(0, 0);
+      lcd.write(CHAR_ARROW_LEFT);
+      lcd.print("Prepare  Files");
+      lcd.write(CHAR_ARROW_RIGHT);
+
+      lcd.setCursor(0, 1);
+      lcd.write(CHAR_ARROW_DOWN);
+      lcd.print("About   Manual");
+      lcd.write(CHAR_ARROW_UP);
+
+    break;
+    case SCREEN_FILE:    // Select file
+
+      nb_files = getnrfilenames();
+
+      lcd.setCursor(0, 0);
+      lcd.print("Files  ");
+
+      if(index_files == 0){
+        lcd.write(CHAR_ARROW_DOWN);
+      } else if (index_files < (nb_files - 1)){
+        lcd.write(CHAR_ARROW_UPDOWN);
+      } else {
+        lcd.write(CHAR_ARROW_UP);
+      }
+
+      lcd.print(" XX");
+      lcd.print(index_files + 1);
+      lcd.print("/YY");
+      lcd.print(nb_files);
+
+      lcd.setCursor(0, 1);
+      getfilename(index_files);
+      lcd.print(filename);
+      lcd.setCursor(13, 1);
+      lcd.print("OK");
+      lcd.write(CHAR_ARROW_RIGHT);
+
+    break;
+    case SCREEN_PRINT:    // Printing
+
+      lcd.setCursor(0, 0);
+      lcd.print("  Printing...");
+
+      lcd.setCursor(0, 1);
+      switch(print_progress){
+        case PROGRESS_GCODE:
+          lcd.print("Gco: XXXX/YYYY");
+        break;
+        case PROGRESS_TEMP:
+          lcd.print("Temp: XXX/YYY");
+        break;
+      }
+
+    break;
+    case SCREEN_CALIBRATE: // Calibration
+
+      lcd.setCursor(0, 0);
+      lcd.print("Calib  -  Step ");
+      lcd.print(calibration_step + 1);
+
+      lcd.setCursor(0, 1);
+      lcd.print(calibration_labels[calibration_step]);
+      lcd.setCursor(13, 1);
+      lcd.print("OK");
+      lcd.write(CHAR_ARROW_RIGHT);
+
+    break;
+    case SCREEN_MANUAL:    // Manual control
+
+      lcd.setCursor(0, 0);
+      lcd.print("Manual");
+
+      switch(control_step){
+        case CONTROL_XY:
+          lcd.setCursor(0, 1);
+          lcd.print("x: ");
+          lcd.print(control_init_x);
+          lcd.print(" y: ");
+          lcd.print(control_init_y);
+        break;
+        case CONTROL_Z:
+
+          lcd.setCursor(10, 0);
+          lcd.write(CHAR_DELTA);
+          lcd.setCursor(12, 0);
+          lcd.print(control_step_z);
+
+          lcd.setCursor(0, 1);
+          lcd.print("z: ");
+          lcd.print(control_init_z);
+        break;
+        case CONTROL_TEMP:
+
+          lcd.setCursor(10, 0);
+          lcd.write(CHAR_DELTA);
+          lcd.setCursor(12, 0);
+          lcd.print(control_step_temp);
+
+          lcd.setCursor(0, 1);
+          lcd.print("temp: ");
+          lcd.print(ftostr3(analog2temp(current_raw)));
+          lcd.print("/");
+          lcd.print(ftostr3(analog2temp(target_raw)));
+
+          delay(1000);
+          lcd_refresh = true;
+        break;
+      }
+
+    break;
+  }
+}
+
+void key_interaction(const uint8_t key){
+
+  switch(current_screen){
+    case SCREEN_HOME: // Main Menu
+      switch(key){
+        case JOY_LEFT:
+          current_screen = SCREEN_CALIBRATE;
+        break;
+        case JOY_RIGHT:
+          current_screen = SCREEN_FILE;
+        break;
+        case JOY_UP:
+          current_screen = SCREEN_MANUAL;
+        break;
+        case JOY_DOWN:
+        case JOY_OK:
+          current_screen = SCREEN_INIT;
+        break;
+      }
+    break;
+    case SCREEN_FILE: // Select file
+      switch(key){
+        case JOY_DOWN:
+          index_files = index_files + 1;
+          if(index_files >= nb_files){
+            index_files = nb_files - 1;
+          }
+          lcd_refresh = true;
+          break;
+        case JOY_UP:
+          index_files = index_files - 1;
+          if(index_files < 0){
+            index_files = 0;
+          }
+          lcd_refresh = true;
+          break;
+        case JOY_LEFT:
+          // return to main menu
+          current_screen = SCREEN_HOME;
+          break;
+        case JOY_RIGHT:
+        case JOY_OK:
+          char cmd[30];
+          for(int i=0;i<strlen(filename);i++)
+            filename[i]=tolower(filename[i]);
+          sprintf(cmd,"M23 %s",filename);
+          enquecommand(cmd);
+          enquecommand("M24");
+          // load printing
+          current_screen = SCREEN_PRINT;
+          break;
+      }
+    break;
+    case SCREEN_PRINT: // Print screen
+      switch(key){
+        case JOY_LEFT:
+        // return to file menu
+        current_screen = SCREEN_FILE;
+        break;
+      }
+    break;
+    case SCREEN_CALIBRATE: // Calibrate screen
+      switch(key){
+        case JOY_LEFT:
+        // return to main menu
+        current_screen = SCREEN_HOME;
+        break;
+        case JOY_RIGHT:
+        case JOY_OK:
+        calibration_step += 1;
+        switch (calibration_step){
+          case CALIBRATION_HOME:
+            enquecommand("G28 X-105 Y-105 Z0");
+            break;
+          case CALIBRATION_ORIGIN:
+            enquecommand("G92 X0 Y0 Z0");
+            break;
+          case CALIBRATION_PREHEAT:
+            target_raw = temp2analog(170);
+            break;
+          case CALIBRATION_EXTRUDE:
+            enquecommand("G92 E0");
+            enquecommand("G1 F700 E50");
+            break;
+          case CALIBRATION_DISABLE_STEPPERS:
+            enquecommand("M84");
+            calibration_step = CALIBRATION_PREPARE;
+            current_screen=SCREEN_HOME;
+            break;
+        }
+        lcd_refresh = true;
+        break;
+      }
+    break;
+    case SCREEN_MANUAL: // Manual screen
+      lcd_refresh = true;
+      switch(key){
+        case JOY_DOWN:
+          switch(control_step){
+            case CONTROL_XY:
+              control_init_x += 10;
+              enquecommand("G91");
+              enquecommand("G1 X10 Y0 E10");
+            break;
+            case CONTROL_Z:
+              control_init_z -= control_step_z;
+              enquecommand("G91");
+              enquecommand("G1 Z-10 E10");
+            break;
+            case CONTROL_TEMP:
+              temp2analog(target_raw - control_init_temp);
+            break;
+          }
+        break;
+        case JOY_UP:
+          switch(control_step){
+            case CONTROL_XY:
+              control_init_x -= 10;
+              enquecommand("G91");
+              enquecommand("G1 X-10 Y0 E10");
+            break;
+            case CONTROL_Z:
+              control_init_z += control_step_z;
+              enquecommand("G91");
+              enquecommand("G1 Z10 E10");
+            break;
+            case CONTROL_TEMP:
+              temp2analog(target_raw + control_step_temp);
+            break;
+          }
+        break;
+        case JOY_LEFT:
+          switch(control_step){
+            case CONTROL_XY:
+              control_init_y -= 10;
+              enquecommand("G91");
+              enquecommand("G1 X0 Y-10 E10");
+            break;
+            case CONTROL_Z:
+              if(control_step_z > 1)
+                control_step_z -= 1;
+            break;
+            case CONTROL_TEMP:
+              if(control_step_temp > 1)
+                control_step_temp -= 1;
+            break;
+          }
+        break;
+        case JOY_RIGHT:
+          switch(control_step){
+            case CONTROL_XY:
+              control_init_y += 10;
+              enquecommand("G91");
+              enquecommand("G1 X0 Y10 E10");
+            break;
+            case CONTROL_Z:
+              control_step_z += 1;
+            break;
+            case CONTROL_TEMP:
+              control_step_temp += 1;
+            break;
+          }
+        break;
+        case JOY_OK:
+          control_step += 1;
+          if(control_step > CONTROL_TEMP){
+            control_step = 0;
+            current_screen = SCREEN_HOME;
+          }
+        break;
+      }
+    break;
+
+  }
+
+}
+
+void getfilename(const uint8_t nr)
+{
+#ifdef SDSUPPORT  
+  dir_t p;
+  root.rewind();
+  uint8_t cnt=0;
+  filename[0]='\0';
+  while (root.readDir(p) > 0)
+  {
+    if (p.name[0] == DIR_NAME_FREE) break;
+    if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
+    if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
+    if(p.name[8]!='G') continue;
+    if(p.name[9]!='C') continue;
+    if(p.name[10]!='O') continue;
+    if(cnt++!=nr) continue;
+    uint8_t writepos=0;
+    for (uint8_t i = 0; i < 11; i++) 
+    {
+      if (p.name[i] == ' ') continue;
+      if (i == 8) {
+        filename[writepos++]='.';
+      }
+      filename[writepos++]=p.name[i];
+    }
+    filename[writepos++]=0;
+  }
+#endif  
+}
+
+uint8_t getnrfilenames()
+{
+#ifdef SDSUPPORT
+  dir_t p;
+  root.rewind();
+  uint8_t cnt=0;
+  while (root.readDir(p) > 0)
+  {
+    //Serial.println((char*)p.name);
+    if (p.name[0] == DIR_NAME_FREE) break;
+    if (p.name[0] == DIR_NAME_DELETED || p.name[0] == '.'|| p.name[0] == '_') continue;
+    if (!DIR_IS_FILE_OR_SUBDIR(&p)) continue;
+    if(p.name[8]!='G') continue;
+    if(p.name[9]!='C') continue;
+    if(p.name[10]!='O') continue;
+    cnt++;
+  }
+  return cnt;
+#endif
+}
+
+char conv[8];
+
+///  convert float to string with +123.4 format
+char *ftostr3(const float &x)
+{
+  //sprintf(conv,"%5.1f",x);
+  int xx=x;
+  conv[0]=(xx/100)%10+'0';
+  conv[1]=(xx/10)%10+'0';
+  conv[2]=(xx)%10+'0';
+  conv[3]=0;
+  return conv;
+}
+
+
+  #define LCD_MESSAGE(x) lcd_status(x);
+  #define LCD_STATUS lcd_status()
 
 #endif
