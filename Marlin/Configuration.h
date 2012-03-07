@@ -8,20 +8,26 @@
 //User specified version info of THIS file to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to THIS file by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2012-02-08j" //Personal revision number for changes to THIS file.
-#define STRING_CONFIG_H_AUTHOR "username" //Who made the changes.
+#define STRING_VERSION_CONFIG_H "2012-02-25" //Personal revision number for changes to THIS file.
+#define STRING_CONFIG_H_AUTHOR "erik" //Who made the changes.
 
 // This determines the communication speed of the printer
 #define BAUDRATE 250000
 //#define BAUDRATE 115200
 
 //// The following define selects which electronics board you have. Please choose the one that matches your setup
-// MEGA/RAMPS up to 1.2 = 3,
-// RAMPS 1.3 = 33
-// Gen6 = 5,
+// Gen7 custom (Alfons3 Version) = 10 "https://github.com/Alfons3/Generation_7_Electronics"
+// Gen7 v1.1, v1.2 = 11
+// Gen7 v1.3 = 12
+// Gen7 v1.4 = 13
+// MEGA/RAMPS up to 1.2 = 3
+// RAMPS 1.3 = 33 (Power outputs: Extruder, Bed, Fan)
+// RAMPS 1.3 = 34 (Power outputs: Extruder0, Extruder1, Bed)
+// Gen6 = 5
+// Gen6 deluxe = 51
 // Sanguinololu 1.2 and above = 62
-// Ultimaker = 7,
-// Teensylu = 8,
+// Ultimaker = 7
+// Teensylu = 8
 // Gen3+ =9
 #define MOTHERBOARD 7
 
@@ -47,8 +53,8 @@
 #define TEMP_SENSOR_BED 0
 
 // Actual temperature must be close to target for this long before M109 returns success
-#define TEMP_RESIDENCY_TIME 30  // (seconds)
-#define TEMP_HYSTERESIS 3       // (C°) range of +/- temperatures considered "close" to the target one
+#define TEMP_RESIDENCY_TIME 10	// (seconds)
+#define TEMP_HYSTERESIS 3       // (degC) range of +/- temperatures considered "close" to the target one
 
 // The minimal temperature defines the temperature below which the heater will not be enabled It is used
 // to check that the wiring to the thermistor is not broken. 
@@ -65,6 +71,7 @@
 #define HEATER_1_MAXTEMP 275
 #define HEATER_2_MAXTEMP 275
 #define BED_MAXTEMP 150
+
 
 // PID settings:
 // Comment the following line to disable PID and enable bang-bang.
@@ -137,11 +144,16 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
 
-#define min_software_endstops true //If true, axis won't move to coordinates less than zero.
+#define min_software_endstops true //If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops true  //If true, axis won't move to coordinates greater than the defined lengths below.
 #define X_MAX_LENGTH 205
 #define Y_MAX_LENGTH 205
 #define Z_MAX_LENGTH 200
+
+// The position of the homing switches. Use MAX_LENGTH * -0.5 if the center should be 0, 0, 0
+#define X_HOME_POS 0
+#define Y_HOME_POS 0
+#define Z_HOME_POS 0
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
@@ -159,6 +171,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 // 
 #define DEFAULT_XYJERK                20.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
+#define DEFAULT_EJERK                 5.0    // (mm/sec)
 
 //===========================================================================
 //=============================Additional Features===========================
@@ -177,15 +190,25 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 //LCD and SD support
 //#define ULTRA_LCD  //general lcd support, also 16x2
-#define SDSUPPORT // Enable SD Card Support in Hardware Console
+//#define SDSUPPORT // Enable SD Card Support in Hardware Console
 
-//#define ULTIPANEL
+#define ULTIPANEL
 #ifdef ULTIPANEL
-  //#define NEWPANEL  //enable this if you have a click-encoder panel
+  #define NEWPANEL  //enable this if you have a click-encoder panel
   #define SDSUPPORT
   #define ULTRA_LCD
   #define LCD_WIDTH 20
   #define LCD_HEIGHT 4
+
+// Preheat Constants
+  #define PLA_PREHEAT_HOTEND_TEMP 180 
+  #define PLA_PREHEAT_HPB_TEMP 70
+  #define PLA_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
+
+  #define ABS_PREHEAT_HOTEND_TEMP 240
+  #define ABS_PREHEAT_HPB_TEMP 100
+  #define ABS_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
+
 #else //no panel but just lcd 
   #ifdef ULTRA_LCD
     #define LCD_WIDTH 16
