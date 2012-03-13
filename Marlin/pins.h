@@ -682,7 +682,7 @@
 #define KILL_PIN           -1
 #define SUICIDE_PIN        54  //PIN that has to be turned on right after start, to keep power flowing.
 
-#ifdef ULTRA_LCD
+#ifdef LCD
 
   #ifdef NEWPANEL
   //arduino pin witch triggers an piezzo beeper

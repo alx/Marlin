@@ -1,8 +1,19 @@
 #ifndef __ULTRALCDH
 #define __ULTRALCDH
 #include "Marlin.h"
+
 #ifdef ULTRA_LCD
   #include <LiquidCrystal.h>
+  extern LiquidCrystal lcd;
+#endif
+
+#ifdef DEULIGNE_LCD
+  #include "Wire.h"
+  #include <Deuligne.h>
+  extern Deuligne lcd;
+#endif
+
+#ifdef LCD
   void lcd_status();
   void lcd_init();
   void lcd_status(const char* message);
@@ -11,8 +22,7 @@
 
   #define LCD_UPDATE_INTERVAL 100
   #define STATUSTIMEOUT 15000
-  extern LiquidCrystal lcd;
-  
+    
   #ifdef NEWPANEL
     #define EN_C (1<<BLEN_C)
     #define EN_B (1<<BLEN_B)
@@ -137,11 +147,13 @@
 
   #define LCD_MESSAGE(x) lcd_status(x);
   #define LCD_MESSAGEPGM(x) lcd_statuspgm(MYPGM(x));
-  #define LCD_STATUS lcd_status()
+  #define LCD_STATUS lcd_status();
+  #define LCD_INIT lcd_init();
 #else //no lcd
   #define LCD_STATUS
   #define LCD_MESSAGE(x)
   #define LCD_MESSAGEPGM(x)
+  #define LCD_INIT
   FORCE_INLINE void lcd_status() {};
 
   #define CLICKED false

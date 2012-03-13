@@ -37,6 +37,13 @@
 #include "EEPROMwrite.h"
 #include "language.h"
 
+#ifdef LCD
+  #ifdef DEULIGNE_LCD
+    #include "Wire.h"
+    #include <Deuligne.h>
+  #endif
+#endif
+
 #define VERSION_STRING  "1.0.0 RC2"
 
 // look here for descriptions of gcodes: http://linuxcnc.org/handbook/gcode/g-code.html
@@ -301,6 +308,7 @@ void setup()
 
 void loop()
 {
+  LCD_INIT;
   if(buflen < (BUFSIZE-1))
     get_command();
   #ifdef SDSUPPORT
