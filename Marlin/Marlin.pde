@@ -36,6 +36,8 @@
 #include "watchdog.h"
 #include "EEPROMwrite.h"
 #include "language.h"
+#include "Wire.h"
+#include <Deuligne.h>
 
 #ifdef LCD
   #ifdef DEULIGNE_LCD
@@ -141,6 +143,7 @@ float current_position[NUM_AXIS] = { 0.0, 0.0, 0.0, 0.0 };
 float add_homeing[3]={0,0,0};
 uint8_t active_extruder = 0;
 unsigned char FanSpeed=0;
+Deuligne lcd2;
 
 //===========================================================================
 //=============================private variables=============================
@@ -255,6 +258,11 @@ void suicide()
 
 void setup()
 { 
+  lcd2.init();
+  lcd2.print("tetalab.org");
+  lcd2.setCursor(0, 1);
+  lcd2.print("Marlin firmware");
+
   setup_powerhold();
   MYSERIAL.begin(BAUDRATE);
   SERIAL_PROTOCOLLNPGM("start");
