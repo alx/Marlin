@@ -431,7 +431,7 @@ void MainMenu::showStatus()
       lcd.print(" ");
     messagetext[0]='\0';
   }
-  
+#ifdef SDSUPPORT
   static uint8_t oldpercent=101;
   uint8_t percent=card.percentDone();
   if(oldpercent!=percent ||force_lcd_update)
@@ -440,7 +440,7 @@ void MainMenu::showStatus()
     lcd.print(itostr3((int)percent));
     lcdprintPGM("%SD");
   }
-  
+#endif
 #else //smaller LCDS----------------------------------
   static int olddegHotEnd0=-1;
   static int oldtargetHotEnd0=-1;
@@ -495,6 +495,7 @@ enum {ItemP_exit, ItemP_autostart,ItemP_disstep,ItemP_home, ItemP_origin, ItemP_
   
 void MainMenu::showPrepare()
 {
+#ifdef ULTIPANEL
  uint8_t line=0;
  clearIfNecessary();
  for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
@@ -550,6 +551,7 @@ void MainMenu::showPrepare()
   line++;
  }
  updateActiveLines(ItemP_move,encoderpos);
+#endif
 }
 
 enum {
@@ -1997,6 +1999,7 @@ void MainMenu::showSD()
  }
 #endif
 }
+
 
 enum {ItemM_watch, ItemM_prepare, ItemM_control, ItemM_file };
 void MainMenu::showMainMenu()
