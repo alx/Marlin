@@ -29,7 +29,10 @@
 // Ultimaker = 7
 // Teensylu = 8
 // Gen3+ =9
+
+#ifndef MOTHERBOARD
 #define MOTHERBOARD 7
+#endif
 
 //===========================================================================
 //=============================Thermal Settings  ============================
@@ -86,9 +89,9 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp  22.2
-    #define  DEFAULT_Ki (1.08*PID_dT)  
-    #define  DEFAULT_Kd (114/PID_dT)  
+    #define  DEFAULT_Kp 22.2
+    #define  DEFAULT_Ki 1.08  
+    #define  DEFAULT_Kd 114  
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -96,9 +99,9 @@
 //    #define  DEFAULT_Kd 12  
 
 // Mendel Parts V9 on 12V    
-//    #define  DEFAULT_Kp  63.0
-//    #define  DEFAULT_Ki (2.25*PID_dT)  
-//    #define  DEFAULT_Kd (440/PID_dT)
+//    #define  DEFAULT_Kp 63.0
+//    #define  DEFAULT_Ki 2.25
+//    #define  DEFAULT_Kd 440
 #endif // PIDTEMP
 
 //this prevents dangerous Extruder moves, i.e. if the temperature is under the limit
@@ -194,6 +197,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 //#define ULTRA_LCD  //general lcd support, also 16x2
 //#define SDSUPPORT // Enable SD Card Support in Hardware Console
 
+<<<<<<< HEAD
 //#define DEULIGNE_LCD
 #ifdef DEULIGNE_LCD
   #define SDSUPPORT
@@ -217,7 +221,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
   #define ULTRA_LCD
   #define LCD_WIDTH 20
   #define LCD_HEIGHT 4
-
+  
 // Preheat Constants
   #define PLA_PREHEAT_HOTEND_TEMP 180 
   #define PLA_PREHEAT_HPB_TEMP 70
@@ -230,16 +234,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #else //no panel but just lcd 
   #ifdef ULTRA_LCD
     #define LCD_WIDTH 16
-    #define LCD_HEIGHT 2
-// Preheat Constants
-  #define PLA_PREHEAT_HOTEND_TEMP 180 
-  #define PLA_PREHEAT_HPB_TEMP 70
-  #define PLA_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
-
-  #define ABS_PREHEAT_HOTEND_TEMP 240
-  #define ABS_PREHEAT_HPB_TEMP 100
-  #define ABS_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
-
+    #define LCD_HEIGHT 2    
   #endif
 #endif
 

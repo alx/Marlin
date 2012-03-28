@@ -1198,6 +1198,7 @@ void MainMenu::showControlTemp()
         }
         
       }break;
+      	#ifdef PIDTEMP
       case ItemCT_PID_P: 
       {
       if(force_lcd_update)
@@ -1340,6 +1341,7 @@ void MainMenu::showControlTemp()
         }
         
       }
+      	#endif
       #endif
       break;
     default:   
